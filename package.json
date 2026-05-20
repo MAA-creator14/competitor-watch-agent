@@ -1,0 +1,26 @@
+{
+  "name": "tide-competitor-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Weekly competitive intelligence agent for Tide Payroll & Invoicing.",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "setup-notion": "tsx scripts/setup-notion.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "latest",
+    "@arizeai/openinference-instrumentation-claude-agent-sdk": "latest",
+    "@langfuse/otel": "latest",
+    "@notionhq/client": "^2.3.0",
+    "@opentelemetry/sdk-node": "latest",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.0"
+  }
+}

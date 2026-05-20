@@ -1,0 +1,59 @@
+name: Competitor Watch
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Every Monday at 08:00 UTC
+  workflow_dispatch:       # Allow manual runs from the Actions UI
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run competitor agent
+        run: npm start
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+          NOTION_WATCHLIST_DB_ID: ${{ secrets.NOTION_WATCHLIST_DB_ID }}
+          LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
+          LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
+          LANGFUSE_BASE_URL: ${{ secrets.LANGFUSE_BASE_URL }}
+
+      - name: Send report via SendGrid
+        run: |
+          REPORT_FILE="output/report-$(date +%Y-%m-%d).md"
+          REPORT_BODY=$(cat "$REPORT_FILE" | jq -Rs .)
+          curl --fail --silent --show-error \
+            --request POST \
+            --url https://api.sendgrid.com/v3/mail/send \
+            --header "Authorization: Bearer $SENDGRID_API_KEY" \
+            --header "Content-Type: application/json" \
+            --data "{
+              \"personalizations\": [{\"to\": [{\"email\": \"$SENDGRID_TO\"}]}],
+              \"from\": {\"email\": \"$SENDGRID_FROM\"},
+              \"subject\": \"Tide Competitor Watch — $(date +%Y-%m-%d)\",
+              \"content\": [{\"type\": \"text/plain\", \"value\": $REPORT_BODY}]
+            }"
+        env:
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          SENDGRID_TO: ${{ secrets.SENDGRID_TO }}
+          SENDGRID_FROM: ${{ secrets.SENDGRID_FROM }}
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: competitor-report-${{ github.run_id }}
+          path: output/
+          retention-days: 90
