@@ -23,12 +23,12 @@ jobs:
       - name: Run competitor agent
         run: npm start
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
-          NOTION_WATCHLIST_DB_ID: ${{ secrets.NOTION_WATCHLIST_DB_ID }}
-          LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
-          LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
-          LANGFUSE_BASE_URL: ${{ secrets.LANGFUSE_BASE_URL }}
+          ANTHROPIC_API_KEY: ${{ vars.ANTHROPIC_API_KEY }}
+          NOTION_API_KEY: ${{ vars.NOTION_API_KEY }}
+          NOTION_WATCHLIST_DB_ID: ${{ vars.NOTION_WATCHLIST_DB_ID }}
+          LANGFUSE_PUBLIC_KEY: ${{ vars.LANGFUSE_PUBLIC_KEY }}
+          LANGFUSE_SECRET_KEY: ${{ vars.LANGFUSE_SECRET_KEY }}
+          LANGFUSE_BASE_URL: ${{ vars.LANGFUSE_BASE_URL }}
 
       - name: Send report via SendGrid
         run: |
@@ -46,9 +46,9 @@ jobs:
               \"content\": [{\"type\": \"text/plain\", \"value\": $REPORT_BODY}]
             }"
         env:
-          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
-          SENDGRID_TO: ${{ secrets.SENDGRID_TO }}
-          SENDGRID_FROM: ${{ secrets.SENDGRID_FROM }}
+          SENDGRID_API_KEY: ${{ vars.SENDGRID_API_KEY }}
+          SENDGRID_TO: ${{ vars.SENDGRID_TO }}
+          SENDGRID_FROM: ${{ vars.SENDGRID_FROM }}
 
       - name: Upload report artifact
         uses: actions/upload-artifact@v4
