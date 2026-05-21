@@ -26,6 +26,7 @@ const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
 const REPORT_FILE = `./output/report-${today}.md`;
 
 async function main() {
+  console.log(process.env);
   const missing = ["ANTHROPIC_API_KEY", "NOTION_API_KEY", "NOTION_WATCHLIST_DB_ID"].filter(
     (k) => !process.env[k]
   );
